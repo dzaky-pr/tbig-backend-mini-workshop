@@ -24,7 +24,8 @@ public class BookRepository : IBookRepository
 
     public bool DeleteBook(int ID)
     {
-        _context.Books.Where(row => row.ID == ID).ExecuteDelete();
+        var data = _context.Books.FirstOrDefault(row => row.ID == ID);
+        _context.Books.Remove(data);
         _context.SaveChanges();
 
         return true;
