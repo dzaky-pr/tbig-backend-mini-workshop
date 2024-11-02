@@ -31,7 +31,9 @@ public class Endpoint : Endpoint<Request>
                     o.User.Claims.Add(("Email", req.Email));
                 });
 
-            HttpContext.Response.Cookies.Append("Authorization", jwtToken, new CookieOptions
+            var token = $"Bearer_{jwtToken}";
+
+            HttpContext.Response.Cookies.Append("Authorization", token, new CookieOptions
                 {
                     HttpOnly = true,         
                     Secure = false,           
@@ -42,7 +44,7 @@ public class Endpoint : Endpoint<Request>
             await SendAsync(
                 new {
                     req.Email,
-                    Token = jwtToken
+                    Token = token
                 });
         }
         else

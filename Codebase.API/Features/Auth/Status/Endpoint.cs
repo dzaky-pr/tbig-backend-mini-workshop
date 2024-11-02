@@ -23,8 +23,9 @@ public class Endpoint: EndpointWithoutRequest<Response>
     public override async Task HandleAsync(CancellationToken ct)
     {
         HttpContext.Request.Cookies.TryGetValue("Authorization", out var authToken);
+        var token = authToken?.Substring("Bearer_".Length).Trim();
 
-        if (string.IsNullOrEmpty(authToken))
+        if (string.IsNullOrEmpty(token))
         {
             ThrowError("Jwt token is not found!");
             return;
@@ -43,7 +44,7 @@ public class Endpoint: EndpointWithoutRequest<Response>
 
         try
         {
-            var principal = handler.ValidateToken(authToken, validationParameters, out var validatedToken);
+            var principal = handler.ValidateToken(token, validationParameters, out var validatedToken);
             var claims = principal.Claims.ToDictionary(c => c.Type, c => c.Value);
 
             await SendAsync(
